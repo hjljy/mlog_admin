@@ -2,8 +2,9 @@
   <div class="system-user-container">
     <el-card shadow="hover">
       <div class="system-user-search mb15">
-        <el-input size="small"
-                  placeholder="请输入用户名称"
+        <el-input v-model="tableData.param.title"
+                  size="small"
+                  placeholder="请输入文章名称"
                   style="max-width: 180px"> </el-input>
         <el-button size="small"
                    type="primary"
@@ -28,9 +29,7 @@
         <el-table-column type="index"
                          label="序号"
                          width="50" />
-        <el-table-column prop="title"
-                         label="文章图片"
-                         show-overflow-tooltip></el-table-column>
+
         <el-table-column prop="title"
                          label="文章标题"
                          show-overflow-tooltip></el-table-column>
@@ -42,6 +41,12 @@
                          show-overflow-tooltip></el-table-column>
         <el-table-column prop="viewCount"
                          label="浏览数"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column prop="title"
+                         label="文章分类"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column prop="title"
+                         label="文章标签"
                          show-overflow-tooltip></el-table-column>
         <el-table-column prop="status"
                          label="是否置顶"
@@ -97,7 +102,7 @@ import AddUer from '/@/views/system/user/component/addUser.vue';
 import EditUser from '/@/views/system/user/component/editUser.vue';
 import { pageQuery } from '/@/api/article';
 export default {
-	name: 'article',
+	name: 'articleList',
 	components: { AddUer, EditUser },
 	setup() {
 		const addUserRef = ref();
@@ -108,6 +113,7 @@ export default {
 				total: 0,
 				loading: false,
 				param: {
+					title: '',
 					pageNumber: 1,
 					pageSize: 10,
 				},
