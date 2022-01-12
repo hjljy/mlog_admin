@@ -1,12 +1,13 @@
 <template>
-  <div class="system-user-container">
+  <div class="article-list-container">
     <el-card shadow="hover">
-      <div class="system-user-search mb15">
+      <div class="article-list-search mb15">
         <el-input v-model="tableData.param.title"
                   size="small"
                   placeholder="请输入文章名称"
                   style="max-width: 180px"> </el-input>
-        <el-button size="small"
+        <el-button @click="initTableData"
+                   size="small"
                    type="primary"
                    class="ml10">
           <el-icon>
@@ -17,11 +18,11 @@
         <el-button size="small"
                    type="success"
                    class="ml10"
-                   @click="onOpenAddUser">
+                   @click="onOpenPublished">
           <el-icon>
             <elementFolderAdd />
           </el-icon>
-          新增用户
+          发布文章
         </el-button>
       </div>
       <el-table :data="tableData.data"
@@ -33,84 +34,96 @@
         <el-table-column prop="title"
                          label="文章标题"
                          show-overflow-tooltip></el-table-column>
-        <el-table-column prop="workCount"
+        <el-table-column prop="wordCount"
                          label="文章字数"
+                         width="120"
                          show-overflow-tooltip></el-table-column>
         <el-table-column prop="commentCount"
                          label="评论数"
+                         width="120"
                          show-overflow-tooltip></el-table-column>
         <el-table-column prop="viewCount"
                          label="浏览数"
+                         width="120"
                          show-overflow-tooltip></el-table-column>
-        <el-table-column prop="title"
+        <el-table-column prop="categoryList"
                          label="文章分类"
                          show-overflow-tooltip></el-table-column>
-        <el-table-column prop="title"
+        <el-table-column prop="tagList"
                          label="文章标签"
                          show-overflow-tooltip></el-table-column>
         <el-table-column prop="status"
                          label="是否置顶"
+                         width="120"
                          show-overflow-tooltip>
           <template #default="scope">
-            <el-tag type="success"
-                    v-if="scope.row.status">启用</el-tag>
-            <el-tag type="info"
-                    v-else>禁用</el-tag>
+            <el-switch v-model="scope.row.top"
+                       inline-prompt
+                       active-text="是"
+                       inactive-text="否">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column prop="describe"
-                         label="是否允许评论"
-                         show-overflow-tooltip></el-table-column>
+                         label="允许评论"
+                         width="120"
+                         show-overflow-tooltip>
+          <template #default="scope">
+            <el-switch v-model="scope.row.disallowComment"
+                       inline-prompt
+                       active-text="是"
+                       inactive-text="否">
+            </el-switch>
+          </template>
+        </el-table-column>
         <el-table-column prop="updateTime"
                          label="最后操作时间"
+                         width="180"
+                         :formatter="dateFormatYMDHMS"
                          show-overflow-tooltip></el-table-column>
         <el-table-column label="操作"
                          width="100">
           <template #default="scope">
-            <el-button :disabled="scope.row.userName === 'admin'"
-                       size="mini"
+            <el-button size="mini"
                        type="text"
-                       @click="onOpenEditUser(scope.row)">修改</el-button>
-            <el-button :disabled="scope.row.userName === 'admin'"
-                       size="mini"
+                       @click="onOpenPublished(scope.row.id)">编辑</el-button>
+            <el-button size="mini"
                        type="text"
                        @click="onRowDel(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="onHandleSizeChange"
-                     @current-change="onHandleCurrentChange"
-                     class="mt15"
+      <el-pagination class="mt15"
+                     background
+                     :hide-on-single-page="false"
                      :pager-count="5"
                      :page-sizes="[10, 20, 30]"
                      v-model:current-page="tableData.param.pageNumber"
-                     background
                      v-model:page-size="tableData.param.pageSize"
-                     layout="total, sizes, prev, pager, next, jumper"
+                     layout='prev, pager, next, jumper, ->, total'
                      :total="tableData.total">
       </el-pagination>
     </el-card>
-    <AddUer ref="addUserRef" />
-    <EditUser ref="editUserRef" />
   </div>
 </template>
 
 <script lang="ts">
 import { toRefs, reactive, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import AddUer from '/@/views/system/user/component/addUser.vue';
-import EditUser from '/@/views/system/user/component/editUser.vue';
+
+import commonFunction from '/@/utils/commonFunction';
 import { pageQuery } from '/@/api/article';
 export default {
 	name: 'articleList',
-	components: { AddUer, EditUser },
 	setup() {
-		const addUserRef = ref();
+		const { dateFormatYMDHMS } = commonFunction();
 		const editUserRef = ref();
+		const router = useRouter();
 		const state: any = reactive({
 			tableData: {
 				data: [],
-				total: 0,
+				total: 1,
 				loading: false,
 				param: {
 					title: '',
@@ -123,19 +136,23 @@ export default {
 		const initTableData = async () => {
 			const { data } = await pageQuery(state.tableData.param);
 			state.tableData.data = data.records;
-			state.tableData.total = state.tableData.data.total;
+			state.tableData.total = Number(data.total);
 		};
 		// 打开新增用户弹窗
-		const onOpenAddUser = () => {
-			addUserRef.value.openDialog();
+		const onOpenPublished = (articleId: any) => {
+			if (articleId) {
+				router.push({ path: '/article/publish', query: { articleId: articleId } });
+			} else {
+				router.push('/article/publish');
+			}
 		};
 		// 打开修改用户弹窗
 		const onOpenEditUser = (row: Object) => {
 			editUserRef.value.openDialog(row);
 		};
 		// 删除用户
-		const onRowDel = (row: { userName: any }) => {
-			ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
+		const onRowDel = (row: { title: any }) => {
+			ElMessageBox.confirm(`此操作将永久删除文章：“${row.title}”，是否继续?`, '提示', {
 				confirmButtonText: '确认',
 				cancelButtonText: '取消',
 				type: 'warning',
@@ -158,9 +175,9 @@ export default {
 			initTableData();
 		});
 		return {
-			addUserRef,
-			editUserRef,
-			onOpenAddUser,
+			dateFormatYMDHMS,
+			initTableData,
+			onOpenPublished,
 			onOpenEditUser,
 			onRowDel,
 			onHandleSizeChange,

@@ -7,7 +7,7 @@ import request from '/@/utils/request';
  */
 export function upload(params: Object) {
   return request({
-    url: '/api/files/upload',
+    url: import.meta.env.VITE_UPLOAD_URL as any,
     method: 'post',
     data: params,
     headers: { 'Content-Type': 'multipart/form-data' }

@@ -18,6 +18,8 @@ export default {
     articleList: '文章列表',
     articleAdd: '发布文章',
     publishArticle: '发布文章',
+    tags: '标签管理',
+    category: '分类管理',
     list: '列表',
     menu: '菜单嵌套',
     menu1: '菜单1',
@@ -75,7 +77,7 @@ export default {
     visualizingLinkDemo2: '数据可视化演示2',
     personal: '个人中心',
     tools: '工具类集合',
-    tags: '标签',
+
     layoutLinkView: '外链',
     layoutIfameView: '内嵌 iframe',
   },

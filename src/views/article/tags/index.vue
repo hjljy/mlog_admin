@@ -1,26 +1,28 @@
 <template>
   <div class="article-tags-container">
     <el-card shadow="hover">
-      <div class="article-tags mb15">
-        <el-button size="small"
-                   type="success"
-                   class="ml10"
-                   @click="onOpenEditTags(0)">
-          <el-icon>
-            <elementFolderAdd />
-          </el-icon>
-          新增标签
-        </el-button>
-        <el-button size="small"
-                   type="success"
-                   class="ml10"
-                   @click="cleanTag">
-          <el-icon>
-            <elementDelete />
-          </el-icon>
-          清除未使用标签
-        </el-button>
-      </div>
+      <template #header>
+        <div class="card-header">
+          <el-button size="small"
+                     type="success"
+                     class="ml10"
+                     @click="onOpenEditTags(0)">
+            <el-icon>
+              <elementFolderAdd />
+            </el-icon>
+            新增标签
+          </el-button>
+          <el-button size="small"
+                     type="warning"
+                     class="ml10"
+                     @click="cleanTag">
+            <el-icon>
+              <elementDelete />
+            </el-icon>
+            清除未使用标签
+          </el-button>
+        </div>
+      </template>
       <el-table :data="tableData.data"
                 style="width: 100%">
         <el-table-column type="index"
@@ -88,11 +90,11 @@ export default {
 			const { data } = await listTags();
 			state.tableData.data = data;
 		};
-		// 打开修改用户弹窗
+		// 打开编辑弹窗
 		const onOpenEditTags = (type: number, row: Object) => {
 			editTagsRef.value.openDialog(type, row);
 		};
-		// 删除用户
+		// 删除标签
 		const onRowDel = (row: { id: any }) => {
 			ElMessageBox.confirm(`此操作将永久删除标签：“${row.tag}”，是否继续?`, '提示', {
 				confirmButtonText: '确认',
@@ -108,9 +110,17 @@ export default {
 		};
 		//清除未使用的标签
 		const cleanTag = async () => {
-			const { data } = await clean();
-			await initTableData();
-			ElMessage.success('清除未使用标签：' + data + '条');
+			ElMessageBox.confirm(`此操作将清除未使用的标签，是否继续?`, '提示', {
+				confirmButtonText: '确认',
+				cancelButtonText: '取消',
+				type: 'warning',
+			})
+				.then(async () => {
+					const { data } = await clean();
+					await initTableData();
+					ElMessage.success('清除未使用标签：' + data + '条');
+				})
+				.catch(() => {});
 		};
 		// 页面加载时
 		onMounted(() => {
@@ -127,5 +137,10 @@ export default {
 	},
 };
 </script>
+<style scoped lang="scss">
+.card-header {
+	text-align: right;
+}
+</style>
 
 

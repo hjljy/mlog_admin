@@ -14,7 +14,7 @@ export function pageQuery(params: Object) {
 }
 
 /**
- * 总数统计
+ * 发布文章
  * 
  * @returns 返回接口数据
  */
@@ -23,5 +23,17 @@ export function publishArticle(params: Object) {
     url: '/api/article/',
     method: 'post',
     data: params,
+  });
+}
+
+/**
+ * 发布文章
+ * 
+ * @returns 返回接口数据
+ */
+export function getArticle(id: Object) {
+  return request({
+    url: '/api/article/' + id,
+    method: 'get'
   });
 }

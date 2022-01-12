@@ -17,6 +17,8 @@ export default {
     article: '文章列表',
     articleList: '文章列表',
     publishArticle: '发布文章',
+    tags: "标签管理",
+    category: "分类管理",
     menu: '選單嵌套',
     menu1: '選單1',
     menu11: '選單11',

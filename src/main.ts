@@ -6,15 +6,18 @@ import { directive } from '/@/utils/directive';
 import { i18n } from '/@/i18n/index';
 import other from '/@/utils/other';
 
+
 import mavonEditor from 'mavon-editor';
 import 'mavon-editor/dist/css/index.css'
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import '/@/theme/index.scss';
+
 import mitt from 'mitt';
 import screenShort from 'vue-web-screen-shot';
 import VueGridLayout from 'vue-grid-layout';
-
+//自定义全局样式
+import '/@/style/index.scss'
 const app = createApp(App);
 
 directive(app);

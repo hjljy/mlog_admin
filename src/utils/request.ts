@@ -6,16 +6,24 @@ import { Session } from '/@/utils/storage';
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_URL as any,
   timeout: 50000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'x-requested-with': 'XMLHttpRequest'
+  },
 });
 
 // 添加请求拦截器
 service.interceptors.request.use(
   (config) => {
-    config.headers.common['x-requested-with'] = 'XMLHttpRequest'
+    if (!config.headers) {
+      config.headers = {
+        'Content-Type': 'application/json',
+        'x-requested-with': 'XMLHttpRequest'
+      }
+    }
     // 在发送请求之前做些什么 token
     if (Session.get('token')) {
-      config.headers.common['Authorization'] = `${Session.get('token')}`;
+      config.headers.Authorization = `${Session.get('token')}`;
     }
     return config;
   },

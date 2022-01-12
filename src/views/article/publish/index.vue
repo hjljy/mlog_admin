@@ -32,7 +32,7 @@
                   :lg="24"
                   :xl="24">
             <el-form-item label="文章内容">
-              <md-editor v-model="text"
+              <md-editor v-model="form.contentMd"
                          class="markdown-container"
                          @onUploadImg="onUploadImg" />
             </el-form-item>
@@ -40,32 +40,41 @@
         </el-row>
       </el-form>
     </el-card>
-    <PublishSetting ref="publishSetting" />
-    <EditUser ref="editUserRef" />
+    <PublishSetting ref="publishSetting"
+                    :data="form" />
+
   </div>
 
 </template>
 
 <script lang="ts">
-import { ref, toRefs, reactive, defineComponent } from 'vue';
+import { ref, toRefs, reactive, defineComponent, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import PublishSetting from '/@/views/article/publish/component/publishSetting.vue';
-import EditUser from '/@/views/system/user/component/editUser.vue';
+
 import 'md-editor-v3/lib/style.css';
-import { publishArticle } from '/@/api/article';
+import { getArticle, publishArticle } from '/@/api/article';
 import { upload } from '/@/api/files';
 export default defineComponent({
 	name: 'md',
-	components: { MdEditor, PublishSetting, EditUser },
+	components: { MdEditor, PublishSetting },
 	setup() {
+		const route = useRoute();
 		const publishSetting = ref();
 		const editUserRef = ref();
 		const state = reactive({
-			value: 'afsafa',
-			text: '',
 			form: {
-				title: '',
-				contentMd: '',
+				category: [], //文章分类
+				tagList: [], //文章标签
+				thumbnail: '', // 文章封面
+				links: '', //文章路径
+				contentText: '', // 文章摘要
+				createTime: new Date().getTime(), //文章创建时间
+				title: '', //文章标题
+				contentMd: '', //文章内容
+				disallowComment: true, //允许评论
+				top: false, //置顶
 			},
 		});
 		const publish = async (v: number) => {
@@ -91,7 +100,15 @@ export default defineComponent({
 			);
 			callback(res.map((item: any) => item.data.filePath));
 		};
-
+		const initForm = async () => {
+			if (route.query.articleId) {
+				const { data } = await getArticle(route.query.articleId);
+				state.form = data;
+			}
+		};
+		onMounted(async () => {
+			await initForm();
+		});
 		return {
 			publishSetting,
 			editUserRef,
