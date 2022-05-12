@@ -7,7 +7,7 @@ import request from '/@/utils/request';
  */
 export function listTags() {
   return request({
-    url: '/api/tags',
+    url: '/api/admin/tags',
     method: 'get',
   });
 }
@@ -19,7 +19,7 @@ export function listTags() {
  */
 export function addTags(data: Object) {
   return request({
-    url: '/api/tags',
+    url: '/api/admin/tags',
     method: 'post',
     data
   });
@@ -33,7 +33,7 @@ export function addTags(data: Object) {
  */
 export function updateTags(data: Object) {
   return request({
-    url: '/api/tags',
+    url: '/api/admin/tags',
     method: 'put',
     data
   });
@@ -47,7 +47,7 @@ export function updateTags(data: Object) {
  */
 export function delTags(id: Object) {
   return request({
-    url: '/api/tags/' + id,
+    url: '/api/admin/tags/' + id,
     method: 'delete',
   });
 }
@@ -59,7 +59,7 @@ export function delTags(id: Object) {
  */
 export function clean() {
   return request({
-    url: '/api/tags/clean',
+    url: '/api/admin/tags/clean',
     method: 'delete',
   });
 }

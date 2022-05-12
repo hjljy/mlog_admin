@@ -34,7 +34,8 @@
             <el-form-item label="文章内容">
               <md-editor v-model="form.contentMd"
                          class="markdown-container"
-                         @onUploadImg="onUploadImg" />
+                         @onUploadImg="onUploadImg"
+                         @onHtmlChanged="onHtmlChange" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -69,7 +70,8 @@ export default defineComponent({
 				tagList: [], //文章标签
 				thumbnail: '', // 文章封面
 				links: '', //文章路径
-				contentText: '', // 文章摘要
+				contentText: '', // 文章内容
+				abstractText: '', //文章摘要
 				createTime: new Date().getTime(), //文章创建时间
 				title: '', //文章标题
 				contentMd: '', //文章内容
@@ -81,7 +83,6 @@ export default defineComponent({
 			if (v === 1) {
 				publishSetting.value.openDialog();
 			} else {
-				state.form.contentMd = state.text;
 				await publishArticle(state.form);
 			}
 		};
@@ -100,6 +101,10 @@ export default defineComponent({
 			);
 			callback(res.map((item: any) => item.data.filePath));
 		};
+
+		const onHtmlChange = (v: string) => {
+			state.form.contentText = v;
+		};
 		const initForm = async () => {
 			if (route.query.articleId) {
 				const { data } = await getArticle(route.query.articleId);
@@ -113,6 +118,7 @@ export default defineComponent({
 			publishSetting,
 			editUserRef,
 			publish,
+			onHtmlChange,
 			onUploadImg,
 			...toRefs(state),
 		};

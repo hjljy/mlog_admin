@@ -7,7 +7,7 @@ import request from '/@/utils/request';
  */
 export function listCategory() {
   return request({
-    url: '/api/category',
+    url: '/api/admin/category',
     method: 'get',
   });
 }
@@ -19,7 +19,7 @@ export function listCategory() {
  */
 export function addCategory(data: Object) {
   return request({
-    url: '/api/category',
+    url: '/api/admin/category',
     method: 'post',
     data
   });
@@ -33,7 +33,7 @@ export function addCategory(data: Object) {
  */
 export function updateCategory(data: Object) {
   return request({
-    url: '/api/category',
+    url: '/api/admin/category',
     method: 'put',
     data
   });
@@ -47,7 +47,7 @@ export function updateCategory(data: Object) {
  */
 export function delCategory(id: Object) {
   return request({
-    url: '/api/category/' + id,
+    url: '/api/admin/category/' + id,
     method: 'delete',
   });
 }

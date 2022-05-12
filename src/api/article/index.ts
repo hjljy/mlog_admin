@@ -5,9 +5,9 @@ import request from '/@/utils/request';
  * 
  * @returns 返回接口数据
  */
-export function pageQuery(params: Object) {
+export function pageByQuery(params: Object) {
   return request({
-    url: '/api/article/page',
+    url: '/api/admin/article/page',
     method: 'post',
     data: params,
   });
@@ -20,20 +20,33 @@ export function pageQuery(params: Object) {
  */
 export function publishArticle(params: Object) {
   return request({
-    url: '/api/article/',
+    url: '/api/admin/article/',
     method: 'post',
     data: params,
   });
 }
 
 /**
- * 发布文章
+ * 获取文章
  * 
  * @returns 返回接口数据
  */
 export function getArticle(id: Object) {
   return request({
-    url: '/api/article/' + id,
+    url: '/api/admin/article/' + id,
     method: 'get'
   });
 }
+
+/**
+ * 删除文章
+ * 
+ * @returns 返回接口数据
+ */
+export function delArticle(id: Object) {
+  return request({
+    url: '/api/admin/article/' + id,
+    method: 'delete'
+  });
+}
+

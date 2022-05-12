@@ -18,12 +18,22 @@
         <el-button size="small"
                    type="success"
                    class="ml10"
-                   @click="onOpenPublished">
+                   @click="onOpenPublished()">
           <el-icon>
             <elementFolderAdd />
           </el-icon>
           发布文章
         </el-button>
+        <el-button size="small"
+                   type="success"
+                   class="ml10"
+                   @click="onOpenEditUser()">
+          <el-icon>
+            <elementFolderAdd />
+          </el-icon>
+          导入文章
+        </el-button>
+
       </div>
       <el-table :data="tableData.data"
                 style="width: 100%">
@@ -98,12 +108,16 @@
                      :hide-on-single-page="false"
                      :pager-count="5"
                      :page-sizes="[10, 20, 30]"
-                     v-model:current-page="tableData.param.pageNumber"
-                     v-model:page-size="tableData.param.pageSize"
+                     @size-change="onHandleSizeChange"
+                     @current-change="onHandleCurrentChange"
+                     :current-page="tableData.param.pageNumber"
+                     :page-size="tableData.param.pageSize"
                      layout='prev, pager, next, jumper, ->, total'
                      :total="tableData.total">
       </el-pagination>
     </el-card>
+
+    <ImportMd ref="importMdRef" />
   </div>
 </template>
 
@@ -111,16 +125,18 @@
 import { toRefs, reactive, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
-
+import ImportMd from '/@/views/article/list/component/importMd.vue';
 import commonFunction from '/@/utils/commonFunction';
-import { pageQuery } from '/@/api/article';
+import { pageByQuery, delArticle } from '/@/api/article';
 export default {
 	name: 'articleList',
+	components: { ImportMd },
 	setup() {
 		const { dateFormatYMDHMS } = commonFunction();
-		const editUserRef = ref();
+		const importMdRef = ref();
 		const router = useRouter();
 		const state: any = reactive({
+			fileList: [],
 			tableData: {
 				data: [],
 				total: 1,
@@ -132,13 +148,14 @@ export default {
 				},
 			},
 		});
+
 		// 初始化表格数据
 		const initTableData = async () => {
-			const { data } = await pageQuery(state.tableData.param);
+			const { data } = await pageByQuery(state.tableData.param);
 			state.tableData.data = data.records;
 			state.tableData.total = Number(data.total);
 		};
-		// 打开新增用户弹窗
+		// 打开编辑文章
 		const onOpenPublished = (articleId: any) => {
 			if (articleId) {
 				router.push({ path: '/article/publish', query: { articleId: articleId } });
@@ -147,8 +164,8 @@ export default {
 			}
 		};
 		// 打开修改用户弹窗
-		const onOpenEditUser = (row: Object) => {
-			editUserRef.value.openDialog(row);
+		const onOpenEditUser = () => {
+			importMdRef.value.openDialog();
 		};
 		// 删除用户
 		const onRowDel = (row: { title: any }) => {
@@ -157,24 +174,30 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning',
 			})
-				.then(() => {
+				.then(async () => {
+					await delArticle(row.id);
+					await initTableData();
 					ElMessage.success('删除成功');
 				})
 				.catch(() => {});
 		};
 		// 分页改变
-		const onHandleSizeChange = (val: number) => {
+		const onHandleSizeChange = async (val: number) => {
 			state.tableData.param.pageSize = val;
+			await initTableData();
 		};
 		// 分页改变
-		const onHandleCurrentChange = (val: number) => {
+		const onHandleCurrentChange = async (val: number) => {
 			state.tableData.param.pageNumber = val;
+			await initTableData();
 		};
 		// 页面加载时
 		onMounted(() => {
 			initTableData();
 		});
 		return {
+			importMdRef,
+
 			dateFormatYMDHMS,
 			initTableData,
 			onOpenPublished,

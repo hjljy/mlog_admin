@@ -14,7 +14,7 @@ const service = axios.create({
 
 // 添加请求拦截器
 service.interceptors.request.use(
-  (config) => {
+  (config: { headers: { Authorization?: any; "Content-Type"?: string; "x-requested-with"?: string; }; }) => {
     if (!config.headers) {
       config.headers = {
         'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ service.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     // 对请求错误做些什么
     return Promise.reject(error);
   }
@@ -35,7 +35,7 @@ service.interceptors.request.use(
 
 // 添加响应拦截器
 service.interceptors.response.use(
-  (response) => {
+  (response: { data: any; }) => {
     // 对响应数据做点什么
     const res = response.data;
     if (res.code && res.code !== 0) {
@@ -52,7 +52,7 @@ service.interceptors.response.use(
       return response.data;
     }
   },
-  (error) => {
+  (error: { message: string | string[]; response: { data: any; statusText: any; }; }) => {
     // 对响应错误做点什么
     if (error.message.indexOf('timeout') != -1) {
       ElMessage.error('网络超时');

@@ -61,7 +61,7 @@
 
             <el-col class="mb20">
               <el-form-item label="文章摘要">
-                <el-input v-model="ruleForm.contentText"
+                <el-input v-model="ruleForm.abstractText"
                           :rows="4"
                           type="textarea"
                           show-word-limit
@@ -140,7 +140,8 @@ export default {
 				tagList: [], //文章标签
 				thumbnail: '', // 文章封面
 				links: '', //文章路径
-				contentText: '', // 文章摘要
+				contentText: '', // 文章内容
+				abstractText: '', //文章摘要
 				createTime: new Date().getTime(), //文章创建时间
 				title: '', //文章标题
 				contentMd: '', //文章内容

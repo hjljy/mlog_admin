@@ -7,7 +7,7 @@ import request from '/@/utils/request';
  */
 export function statisticsCount() {
   return request({
-    url: '/api/statistics/count',
+    url: '/api/admin/statistics/count',
     method: 'get',
   });
 }
